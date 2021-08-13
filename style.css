@@ -1,0 +1,15 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* rect {
+  fill: steelblue;
+} */
+
+text {
+  font-size: 1.2rem;
+}
+
+.tick line {
+  stroke: lightgrey;
+}

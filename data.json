@@ -1,0 +1,242 @@
+[
+  {
+    "name": "Russia",
+    "pop": 145912025,
+    "popDensity": "8.5337"
+  },
+  {
+    "name": "Germany",
+    "pop": 83900473,
+    "popDensity": "234.9403"
+  },
+  {
+    "name": "United Kingdom",
+    "pop": 68207116,
+    "popDensity": "280.8033"
+  },
+  {
+    "name": "France",
+    "pop": 65426179,
+    "popDensity": "118.5912"
+  },
+  {
+    "name": "Italy",
+    "pop": 60367477,
+    "popDensity": "200.3328"
+  },
+  {
+    "name": "Spain",
+    "pop": 46745216,
+    "popDensity": "92.3833"
+  },
+  {
+    "name": "Ukraine",
+    "pop": 43466819,
+    "popDensity": "72.0246"
+  },
+  {
+    "name": "Poland",
+    "pop": 37797005,
+    "popDensity": "120.8812"
+  },
+  {
+    "name": "Romania",
+    "pop": 19127774,
+    "popDensity": "80.2370"
+  },
+  {
+    "name": "Netherlands",
+    "pop": 17173099,
+    "popDensity": "410.3488"
+  },
+  {
+    "name": "Belgium",
+    "pop": 11632326,
+    "popDensity": "381.0379"
+  },
+  {
+    "name": "Czech Republic",
+    "pop": 10724555,
+    "popDensity": "135.9862"
+  },
+  {
+    "name": "Greece",
+    "pop": 10370744,
+    "popDensity": "78.5722"
+  },
+  {
+    "name": "Portugal",
+    "pop": 10167925,
+    "popDensity": "110.4129"
+  },
+  {
+    "name": "Sweden",
+    "pop": 10160169,
+    "popDensity": "22.5634"
+  },
+  {
+    "name": "Hungary",
+    "pop": 9634164,
+    "popDensity": "103.5620"
+  },
+  {
+    "name": "Belarus",
+    "pop": 9442862,
+    "popDensity": "45.4858"
+  },
+  {
+    "name": "Austria",
+    "pop": 9043070,
+    "popDensity": "107.8212"
+  },
+  {
+    "name": "Switzerland",
+    "pop": 8715494,
+    "popDensity": "211.1107"
+  },
+  {
+    "name": "Serbia",
+    "pop": 8697550,
+    "popDensity": "98.4320"
+  },
+  {
+    "name": "Bulgaria",
+    "pop": 6896663,
+    "popDensity": "62.1999"
+  },
+  {
+    "name": "Denmark",
+    "pop": 5813298,
+    "popDensity": "134.8981"
+  },
+  {
+    "name": "Finland",
+    "pop": 5548360,
+    "popDensity": "16.3947"
+  },
+  {
+    "name": "Norway",
+    "pop": 5465630,
+    "popDensity": "16.8795"
+  },
+  {
+    "name": "Slovakia",
+    "pop": 5460721,
+    "popDensity": "111.3592"
+  },
+  {
+    "name": "Ireland",
+    "pop": 4982907,
+    "popDensity": "70.9078"
+  },
+  {
+    "name": "Croatia",
+    "pop": 4081651,
+    "popDensity": "72.1216"
+  },
+  {
+    "name": "Moldova",
+    "pop": 4024019,
+    "popDensity": "118.8920"
+  },
+  {
+    "name": "Bosnia and Herzegovina",
+    "pop": 3263466,
+    "popDensity": "63.7284"
+  },
+  {
+    "name": "Albania",
+    "pop": 2872933,
+    "popDensity": "99.9351"
+  },
+  {
+    "name": "Lithuania",
+    "pop": 2689862,
+    "popDensity": "41.1924"
+  },
+  {
+    "name": "North Macedonia",
+    "pop": 2082658,
+    "popDensity": "80.9963"
+  },
+  {
+    "name": "Slovenia",
+    "pop": 2078724,
+    "popDensity": "102.5366"
+  },
+  {
+    "name": "Latvia",
+    "pop": 1866942,
+    "popDensity": "28.9184"
+  },
+  {
+    "name": "Estonia",
+    "pop": 1325185,
+    "popDensity": "29.3007"
+  },
+  {
+    "name": "Cyprus",
+    "pop": 1215584,
+    "popDensity": "131.4003"
+  },
+  {
+    "name": "Luxembourg",
+    "pop": 634814,
+    "popDensity": "245.4811"
+  },
+  {
+    "name": "Montenegro",
+    "pop": 628053,
+    "popDensity": "45.4715"
+  },
+  {
+    "name": "Malta",
+    "pop": 442784,
+    "popDensity": "1401.2152"
+  },
+  {
+    "name": "Iceland",
+    "pop": 343353,
+    "popDensity": "3.3335"
+  },
+  {
+    "name": "Isle of Man",
+    "pop": 85410,
+    "popDensity": "149.3182"
+  },
+  {
+    "name": "Andorra",
+    "pop": 77355,
+    "popDensity": "165.2885"
+  },
+  {
+    "name": "Faroe Islands",
+    "pop": 49049,
+    "popDensity": "35.2111"
+  },
+  {
+    "name": "Monaco",
+    "pop": 39511,
+    "popDensity": "19559.9010"
+  },
+  {
+    "name": "Liechtenstein",
+    "pop": 38250,
+    "popDensity": "239.0625"
+  },
+  {
+    "name": "San Marino",
+    "pop": 34017,
+    "popDensity": "557.6557"
+  },
+  {
+    "name": "Gibraltar",
+    "pop": 33698,
+    "popDensity": "5616.3333"
+  },
+  {
+    "name": "Vatican City",
+    "pop": 800,
+    "popDensity": "1818.1818"
+  }
+]
