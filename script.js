@@ -332,7 +332,7 @@ async function fullChart() {
           xValue(d) / d3.max(arr, (d) => xValue(d) * 1.1)
         );
       });
-    console.log(d3.max(arr));
+    // console.log(d3.max(arr));
 
     // LABELS FOR AXES
 
@@ -349,3 +349,170 @@ async function fullChart() {
 }
 
 fullChart();
+
+// ///////////////////////
+// Scatter plot
+// let covidArr = [];
+import { covidData } from "./data/covidData (1).js";
+
+// console.log(covidData);
+// const cleanedData = covidData.map((data) => {
+//   const temp = data.date;
+
+//   return {
+//     dateNew: new Date(temp),
+//     ...data,
+//   };
+// });
+// console.log(cleanedData);
+
+const population = {
+  population: 59308690,
+  population_male: 29216012,
+  population_female: 30092678,
+  population_rural: 19408553,
+  population_urban: 39149717,
+  population_age_00_09: 11585605,
+  population_age_10_19: 10409174,
+  population_age_20_29: 10141489,
+  population_age_30_39: 10155325,
+  population_age_40_49: 7043275,
+  population_age_50_59: 4911532,
+  population_age_60_69: 3164441,
+  population_age_70_79: 1476055,
+  population_age_80_and_older: 421794,
+};
+
+function render() {
+  const svg = d3.select(".scatter-plot");
+
+  // Value selectors
+  const xValue = (d) => d.date;
+  const yValue = (d) => d.new_deceased;
+
+  const height = +svg.attr("height");
+  const width = +svg.attr("width");
+
+  const margin = {
+    top: 70,
+    left: 70,
+    right: 50,
+    bottom: 100,
+  };
+
+  const innerHeight = height - margin.top - margin.bottom;
+  const innerWidth = width - margin.left - margin.right;
+
+  const radius = 3;
+
+  // const parseTime = d3.timeFormat("%B %d, %Y"); // Function to format Dates
+
+  const dates = [];
+  for (let obj of covidData) {
+    dates.push(new Date(obj.date));
+  }
+  // console.log(dates);
+
+  // SCALES
+  const xScale = d3.scaleTime().domain(d3.extent(dates)).range([0, innerWidth]);
+  // .nice();
+
+  const xAxis = d3.axisBottom(xScale).ticks(18).tickPadding(10);
+
+  const yScale = d3
+    .scaleLinear()
+    .domain(d3.extent(covidData, (d) => yValue(d)))
+    .range([innerHeight, 0])
+    .nice();
+
+  const yAxis = d3.axisLeft().scale(yScale).ticks(25);
+
+  // yAxis.selectAll(".tick").attr("y2", innerWidth);
+
+  // console.log(yScale);
+
+  // Group element containing contents of svg
+  const g = svg
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+  // Creating the circles
+  const circles = g
+    .append("g")
+    .selectAll("circle")
+    .data(covidData)
+    .enter()
+    .append("circle")
+    .attr("cx", (d) => xScale(new Date(xValue(d))))
+    .attr("cy", (d) => yScale(yValue(d)))
+    .attr("r", radius)
+    .attr("fill", function (d, i, arr) {
+      if (xValue(d)) {
+        return d3.interpolateWarm(
+          yValue(d) / d3.max(covidData, (d) => yValue(d))
+        );
+      }
+    });
+
+  // Tick customization is added where the axes are called
+  const yAxisGroup = g.append("g").call(yAxis);
+  // Make grid lines
+  yAxisGroup.selectAll(".tick line").attr("x2", innerWidth);
+
+  // .attr("transform", "translate(50 , 0)");
+
+  const xAxisGroup = g
+    .append("g")
+    .attr("transform", `translate(0,${innerHeight})`)
+    .call(xAxis);
+
+  xAxisGroup.selectAll(".tick line").attr("y2", 10);
+
+  // AXES LABELS
+
+  // Y axis
+  yAxisGroup
+    .append("text")
+    .attr("fill", "black") // NOTE: Originally appended in white for whatever reason
+    .attr("y", -40)
+    .attr("x", -innerHeight / 2)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "1.5rem")
+    .attr("transform", "rotate(-90)")
+    .text(`Number of Deaths`);
+
+  // X Axis
+  xAxisGroup
+    .append("text")
+    .attr("fill", "black")
+    .attr("x", innerWidth / 2)
+    .attr("font-size", "1.5rem")
+    .attr("text-anchor", "middle")
+    .attr("y", 60)
+    .text(`Time`);
+
+  // Heading
+  svg
+    .append("text")
+    .attr("fill", "black")
+    .text(`Deaths in RSA from Covid Per Day`)
+    .attr("font-size", "2rem")
+    .attr("x", width / 2)
+    .attr("text-anchor", "middle") // Done so that text is aligned exactly in the middle
+    .attr("y", 50);
+
+  // Total
+  svg
+    .append("text")
+    .attr("fill", "black")
+    .text(
+      `Total Deaths : ${covidData.reduce(
+        (acc, day) => (acc += day.new_deceased),
+        0
+      )}`
+    )
+    .attr("x", width)
+    .attr("y", 100)
+    .attr("text-anchor", "end");
+}
+render();
