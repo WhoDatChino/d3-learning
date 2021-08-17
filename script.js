@@ -383,7 +383,7 @@ const population = {
   population_age_80_and_older: 421794,
 };
 
-function render() {
+function renderScatterPlot() {
   const svg = d3.select(".scatter-plot");
 
   // Value selectors
@@ -515,4 +515,172 @@ function render() {
     .attr("y", 100)
     .attr("text-anchor", "end");
 }
-render();
+renderScatterPlot();
+
+function renderLineChart() {
+  const svg = d3.select(".line-chart");
+
+  // Value selectors
+  const xValue = (d) => d.date;
+  const yValue = (d) => d.new_confirmed;
+
+  // console.log(xValue(covidData[0]));
+
+  const height = +svg.attr("height");
+  const width = +svg.attr("width");
+
+  const margin = {
+    top: 70,
+    left: 100,
+    right: 50,
+    bottom: 80,
+  };
+
+  const innerHeight = height - margin.top - margin.bottom;
+  const innerWidth = width - margin.left - margin.right;
+
+  const numberFormat = (num) => d3.format(".4s")(num);
+
+  const dates = [];
+  for (let obj of covidData) {
+    dates.push(new Date(obj.date));
+  }
+  // console.log(dates);
+
+  // SCALES
+  const xScale = d3.scaleTime().domain(d3.extent(dates)).range([0, innerWidth]);
+
+  const yScale = d3
+    .scaleLinear()
+    .domain(d3.extent(covidData, (d) => yValue(d)))
+    .range([innerHeight, 0]);
+
+  const xAxis = d3.axisBottom(xScale).ticks(18).tickPadding(10);
+
+  const yAxis = d3.axisLeft().scale(yScale).ticks(20);
+
+  // APPENDING CONTENTS
+  const g = svg
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+  // For line charts you dont have to do a data bind as you are only making a single path where the data points are the points you want that single line to pass through - need to make use of d3.line()
+
+  const lineGenerator = d3
+    .line()
+    .x((d) => xScale(new Date(xValue(d)))) // NOTE: HAVE to convert to date object - using a string throws error
+    .y((d) => yScale(yValue(d)))
+    .curve(d3.curveBasis); // Rounds the edges so theyre not a jagged. Many other options to chose from
+
+  // CREATING CUSTOM GRADIENT - one of many ways to do this
+  // SVG gradients created w/ <lineargradient> which contains <stop> tags inside it which define at which point the colours begin and what the colour is
+  g.append("linearGradient")
+    .attr("id", "line-gradient") // ID needed so that the gradient can be attached to an element
+    .attr("gradientUnits", "userSpaceOnUse")
+    .attr("x1", 0)
+    .attr("y1", yScale(0))
+    .attr("x2", 0)
+    .attr("y2", yScale(d3.max(covidData, (d) => yValue(d))))
+    .selectAll("stop")
+    .data([
+      { offset: "0%", color: "#1780A1" },
+      { offset: "10%", color: "#2E6F95" },
+      { offset: "20%", color: "#455E89" },
+      { offset: "30%", color: "#5C4D7D" },
+      { offset: "40%", color: "#723C70" },
+      { offset: "50%", color: "#892B64" },
+      { offset: "60%", color: "#A01A58" },
+      { offset: "70%", color: "#B7094C" },
+    ])
+    .enter()
+    .append("stop")
+    .attr("offset", function (d) {
+      return d.offset;
+    })
+    .attr("stop-color", function (d) {
+      return d.color;
+    });
+
+  // console.log(lineGenerator(covidData));
+
+  // CREATING RECTS IN THE BACKGROUND
+  g.selectAll("rect")
+    .data(covidData)
+    .enter()
+    .append("rect")
+    // .attr("x", (d) => xScale(xValue(d)))
+    .attr("y", (d) => yScale(yValue(d)))
+    .attr("height", (d) => innerHeight - yScale(yValue(d)))
+    .attr("width", innerWidth / covidData.length)
+    .attr(
+      "transform",
+      (d, i) => `translate(${(innerWidth / covidData.length) * i},0)`
+    )
+    .attr("fill", "rgba(211, 211, 211, 0.678)");
+
+  // CREATING PATH
+  g.append("path")
+    .attr("d", lineGenerator(covidData))
+    .attr("stroke", "url(#line-gradient)") // ID of custom gradient
+    .attr("stroke-width", 3)
+    .attr("stroke-linejoin", "round") // Smoothes the joints
+    .attr("fill", "none");
+  // AXES & LABELS
+
+  // Tick customization is added where the axes are called
+  const yAxisGroup = g.append("g").call(yAxis);
+  // Make grid lines
+  yAxisGroup.selectAll(".tick line").attr("x2", innerWidth);
+
+  const xAxisGroup = g
+    .append("g")
+    .attr("transform", `translate(0,${innerHeight})`)
+    .call(xAxis);
+
+  xAxisGroup.selectAll(".tick line").attr("y2", 10);
+
+  // Y axis
+  yAxisGroup
+    .append("text")
+    .attr("fill", "black") // NOTE: Originally appended in white for whatever reason
+    .attr("y", -55)
+    .attr("x", -innerHeight / 2)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "1.5rem")
+    .attr("transform", "rotate(-90)")
+    .text(`Number of Cases`);
+
+  // X Axis
+  xAxisGroup
+    .append("text")
+    .attr("fill", "black")
+    .attr("x", innerWidth / 2)
+    .attr("font-size", "1.5rem")
+    .attr("text-anchor", "middle")
+    .attr("y", 60)
+    .text(`Time`);
+
+  // Heading
+  svg
+    .append("text")
+    .attr("fill", "black")
+    .text(`Covid Cases Per Day in RSA`)
+    .attr("font-size", "2rem")
+    .attr("x", width / 2)
+    .attr("text-anchor", "middle") // Done so that text is aligned exactly in the middle
+    .attr("y", 50);
+
+  // Total
+  svg
+    .append("text")
+    .attr("fill", "black")
+    .text(
+      `Total Cases : ${numberFormat(
+        covidData.reduce((acc, day) => (acc += yValue(day)), 0)
+      )}`
+    )
+    .attr("x", width)
+    .attr("y", 100)
+    .attr("text-anchor", "end");
+}
+renderLineChart();

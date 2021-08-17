@@ -1807,8 +1807,8 @@ export const covidData = [
   },
   {
     date: "2020-12-31",
-    new_confirmed: 0,
-    new_deceased: 0,
+    new_confirmed: 16726,
+    new_deceased: 465,
     new_tested: 50110,
   },
   {
@@ -3596,7 +3596,7 @@ export const covidData = [
   {
     date: "2021-08-12",
     new_deceased: 600,
-
+    new_confirmed: 7800,
     new_persons_vaccinated: 253586,
     cumulative_persons_vaccinated: 7249045,
     new_persons_fully_vaccinated: 238723,
