@@ -684,3 +684,108 @@ function renderLineChart() {
     .attr("text-anchor", "end");
 }
 renderLineChart();
+
+// ////////////////////
+// AREA CHART
+
+import { worldPopArr } from "./data/worldPop.js";
+
+function renderAreaChart() {
+  const svg = d3.select(".area-chart");
+
+  // Value selectors
+  const xValue = (d) => d.Year;
+  const yValue = (d) => d.Population;
+
+  // console.log(xValue(covidData[0]));
+
+  const height = +svg.attr("height");
+  const width = +svg.attr("width");
+
+  const margin = {
+    top: 70,
+    left: 100,
+    right: 50,
+    bottom: 80,
+  };
+
+  const innerHeight = height - margin.top - margin.bottom;
+  const innerWidth = width - margin.left - margin.right;
+
+  const numberFormat = (num) => d3.format(".3s")(num).replace("G", "B");
+
+  console.log(numberFormat(worldPopArr[50].Population));
+  // SCALES
+  const xScale = d3
+    .scaleTime()
+    .domain(d3.extent(worldPopArr, (d) => new Date(xValue(d).toString())))
+    .range([0, innerWidth]);
+
+  const yScale = d3
+    .scaleLinear()
+    .domain([0, d3.max(worldPopArr, (d) => yValue(d))])
+    .range([innerHeight, 0])
+    .nice(); // NICE NOT NEAT
+
+  const xAxis = d3.axisBottom(xScale).ticks(15).tickPadding(10);
+
+  const yAxis = d3.axisLeft().scale(yScale).ticks(20).tickFormat(numberFormat);
+
+  const g = svg
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+  // AREA CHART - line chart (path) with the area underneath filled in. Requires diff. d3 method and additional attributes
+
+  const area = d3
+    .area()
+    // .curve(curve)
+    .x((d) => xScale(new Date(xValue(d).toString())))
+    .y0(innerHeight) // Additional attr when compared to line chart
+    .y1((d) => yScale(yValue(d)));
+
+  g.append("path").datum(worldPopArr).attr("fill", "steelblue").attr("d", area);
+
+  // AXES
+  // Y-axis
+  const yAxisGroup = g.append("g").call(yAxis);
+
+  yAxisGroup.selectAll(".tick line").attr("x2", innerWidth);
+
+  yAxisGroup
+    .append("text")
+    .attr("fill", "black") // NOTE: Originally appended in white for whatever reason
+    .attr("y", -55)
+    .attr("x", -innerHeight / 2)
+    .attr("text-anchor", "middle")
+    .attr("font-size", "1.5rem")
+    .attr("transform", "rotate(-90)")
+    .text(`Population Size`);
+
+  // X-axis
+
+  const xAxisGroup = g
+    .append("g")
+    .attr("transform", `translate(0,${innerHeight})`)
+    .call(xAxis);
+
+  xAxisGroup
+    .append("text")
+    .attr("fill", "black")
+    .attr("x", innerWidth / 2)
+    .attr("font-size", "1.5rem")
+    .attr("text-anchor", "middle")
+    .attr("y", 60)
+    .text(`Time`);
+
+  // Heading
+  svg
+    .append("text")
+    .attr("fill", "black")
+    .text(`Global Population Area Chart`)
+    .attr("font-size", "2rem")
+    .attr("x", width / 2)
+    .attr("text-anchor", "middle") // Done so that text is aligned exactly in the middle
+    .attr("y", 50);
+}
+renderAreaChart();
