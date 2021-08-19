@@ -714,7 +714,7 @@ function renderAreaChart() {
 
   const numberFormat = (num) => d3.format(".3s")(num).replace("G", "B");
 
-  console.log(numberFormat(worldPopArr[50].Population));
+  // console.log(numberFormat(worldPopArr[50].Population));
   // SCALES
   const xScale = d3
     .scaleTime()
@@ -789,3 +789,113 @@ function renderAreaChart() {
     .attr("y", 50);
 }
 renderAreaChart();
+
+// /////////////
+// TREEMAP
+
+import { state, formattedArr, byCoin, platforms } from "./data/cryptoData.js";
+
+// console.log(coins);
+// platforms();
+
+function renderTreemap() {
+  const data = formattedArr;
+  console.log(formattedArr);
+
+  const property = (d) => d.percentChange;
+
+  const svg = d3.select("#treemap");
+
+  const height = +svg.attr("height");
+  const width = +svg.attr("width");
+
+  const root = d3
+    .hierarchy(data)
+    .sum(function (d) {
+      return Math.abs(d.value);
+    })
+    .sort((a, b) => a.value - b.value); // Here the size of each leave is given in the 'value' field in input data
+
+  // Then d3.treemap computes the position of each element of the hierarchy
+  d3.treemap().size([width, height]).padding(4)(root);
+
+  console.log(root.leaves());
+  // use this information to add rectangles:
+  svg
+    .selectAll("rect")
+    .data(root.leaves())
+    .join("rect")
+    .attr("x", function (d) {
+      return d.x0;
+    })
+    .attr("y", function (d) {
+      return d.y0;
+    })
+    .attr("width", function (d) {
+      return d.x1 - d.x0;
+    })
+    .attr("height", function (d) {
+      return d.y1 - d.y0;
+    })
+    .style("stroke", (d, i) =>
+      d.data.value > 0 ? "rgb(30, 243, 136)" : "rgb(209, 25, 71)"
+    )
+    .style("stroke-width", "2px")
+    .style("fill", "transparent");
+
+  // and to add the text labels
+  svg
+    .selectAll("text")
+    .data(root.leaves())
+    .join("text")
+    .attr("x", function (d) {
+      return (d.x0 + d.x1) / 2;
+    }) // +10 to adjust position (more right)
+    .attr("y", function (d) {
+      return (d.y0 + d.y1) / 2;
+    }) // +20 to adjust position (lower)
+    .text(function (d) {
+      return `${d.data.name}`;
+    })
+    .attr("text-anchor", "middle")
+    .attr("transform", "translate(0,6)")
+    .attr("font-size", "20px")
+    .attr("fill", "black");
+
+  /*
+  // d3.treemap computes each position of element in hirarchy
+  d3
+    .treemap()
+    // .nodes(root)
+    // .children((d) => d.macros)
+    // .value((d) => property(d))
+    .size([width, height])
+    .padding(2)(root);
+
+  // Use the info generated above to create rectangles
+  svg
+    .selectAll("rect")
+    .data(root.leaves())
+    .join("rect")
+    .attr("x", (d) => d.x0)
+    .attr("y", (d) => d.y0)
+    .attr("width", (d) => d.x1 - d.x0)
+    .attr("height", (d) => d.y1 - d.y0)
+    .style("fill", "lightgrey")
+    .style("stroke", "rgb(30, 243, 136)");
+
+  console.log(root.leaves());
+
+  // Adding labels
+  svg
+    .selectAll("text")
+    .data(root.leaves())
+    .join("text")
+    .attr("x", (d) => d.x0 + 5) // Moves text to the right
+    .attr("y", (d) => d.y0 + 20) // Moves text to the middle
+    .text((d, i) => d.name)
+    .attr("font-size", "18px")
+    .attr("fill", "black");
+    */
+}
+renderTreemap();

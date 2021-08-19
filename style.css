@@ -13,4 +13,5 @@ body {
 .tick line {
   stroke: lightgrey;
   opacity: 0.5;
+  /* background-color: rgb(30, 243, 136); */
 }
