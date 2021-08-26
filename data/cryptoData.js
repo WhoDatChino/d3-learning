@@ -157,6 +157,9 @@ export let formattedArr = {
 function formatAssets() {
   let children = [];
   byCoin.forEach((asset, i) => {
+    // Making sure there is no assetClass sent to the root element if it has no unsold children investments
+    if (formatIndivdCoins(i).length === 0) return;
+
     children.push({
       name: asset.asset,
       //   value: (asset.currentValue / calcFrac()) * 100,
@@ -180,9 +183,10 @@ function formatIndivdCoins(i) {
       100;
 
     children.push({
+      id: macro.id,
       name: macro.asset,
       date: macro.date,
-      value: value,
+      value,
     });
   });
 

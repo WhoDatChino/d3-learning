@@ -809,6 +809,80 @@ function renderTreemap() {
   const height = +svg.attr("height");
   const width = +svg.attr("width");
 
+  // Root for tree - Hierarchy and summation of leaves
+  const root = d3
+    .hierarchy(data)
+    .sum((d) => Math.abs(d.value))
+    .sort((a, b) => d3.descending(b.value, a.value)); // Best to do big to small
+
+  // Create treemap logic -> gives each of the nodes an x0,x1,y0,y1
+  const tree = d3.treemap().size([width, height]).padding(6).paddingInner(10)(
+    root
+  );
+
+  console.log(`root`, root);
+
+  // Create groups for tree leaves - contains everything that goes inside each leaf
+  const leaf = svg
+    .selectAll("g")
+    .data(root.leaves())
+    .join("g")
+    .attr("transform", (d) => `translate(${d.x0}, ${d.y0})`)
+    .attr("id", (d) => d.data.id);
+
+  // Creating the rectangles
+  leaf
+    .append("rect")
+
+    .attr("width", (d) => d.x1 - d.x0)
+    .attr("height", (d) => d.y1 - d.y0)
+    .attr("fill", (d) =>
+      d.data.value > 0 ? "rgba(30, 243, 136,0.1)" : "rgba(209, 25, 71,0.1)"
+    )
+    .attr("stroke", (d) =>
+      d.data.value > 0 ? "rgba(30, 243, 136,1)" : "rgba(209, 25, 71,1)"
+    )
+    .attr("stroke-width", 3);
+
+  // Creating leaf headings
+  // const leafInfo = leaf.append("g");
+  // console.log(`jvhvhjv`, rect.attr("width"));
+
+  const boxInfo = svg
+    .selectAll(".info")
+    .data(root.leaves())
+    .join("g")
+    .style("font-size", 25);
+
+  boxInfo
+    .append("text")
+    .text((d) => d.data.name)
+    .attr("x", (d) => (d.x1 - d.x0) / 2 + d.x0)
+    .attr("y", (d) => (d.y1 - d.y0) / 2 + d.y0 + 10)
+    .attr("text-anchor", "middle")
+    .attr("fill", "black");
+  // boxInfo
+  //   .append("text")
+  //   .text((d) => d.data.date)
+  //   .attr("x", (d) => (d.x1 - d.x0) / 2 + d.x0)
+  //   .attr("y", (d) => (d.y1 - d.y0) / 2 + d.y0 + 12)
+  //   .attr("text-anchor", "middle")
+  //   .attr("fill", "black");
+  // boxInfo
+  //   .append("text")
+  //   .text((d) =>
+  //     d.data.value > 0
+  //       ? `+${d.data.value.toFixed(2)}%`
+  //       : `${d.data.value.toFixed(2)}%`
+  //   )
+  //   .attr("x", (d) => (d.x1 - d.x0) / 2 + d.x0)
+  //   .attr("y", (d) => (d.y1 - d.y0) / 2 + d.y0 + 38)
+  //   .attr("text-anchor", "middle")
+  //   .attr("fill", "black");
+
+  // console.log(d.x1);
+
+  /*
   const root = d3
     .hierarchy(data)
     .sum(function (d) {
@@ -816,10 +890,13 @@ function renderTreemap() {
     })
     .sort((a, b) => a.value - b.value); // Here the size of each leave is given in the 'value' field in input data
 
+  // const tile = d3.treemapBinary()();
   // Then d3.treemap computes the position of each element of the hierarchy
-  d3.treemap().size([width, height]).padding(4)(root);
+  d3.treemap().size([width, height]).round(true).padding(5).paddingInner(10)(
+    root
+  );
 
-  console.log(root.leaves());
+  console.log(`rrr  `, root);
   // use this information to add rectangles:
   svg
     .selectAll("rect")
@@ -840,8 +917,10 @@ function renderTreemap() {
     .style("stroke", (d, i) =>
       d.data.value > 0 ? "rgb(30, 243, 136)" : "rgb(209, 25, 71)"
     )
-    .style("stroke-width", "2px")
-    .style("fill", "transparent");
+    .style("stroke-width", "5px")
+    .style("fill", (d, i) =>
+      d.data.value > 0 ? "rgba(30, 243, 136,0.1)" : "rgba(209, 25, 71,0.1)"
+    );
 
   // and to add the text labels
   svg
@@ -861,7 +940,7 @@ function renderTreemap() {
     .attr("transform", "translate(0,6)")
     .attr("font-size", "20px")
     .attr("fill", "black");
-
+*/
   /*
   // d3.treemap computes each position of element in hirarchy
   d3
