@@ -166,7 +166,7 @@ function formatAssets() {
       children: formatIndivdCoins(i),
     });
   });
-  console.log(`child1`, children);
+  // console.log(`child1`, children);
   return children;
 }
 

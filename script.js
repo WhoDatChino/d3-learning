@@ -88,6 +88,9 @@ async function d3Operations() {
     .attr("fill", "white");
 */
 
+  // /////////////////////////////////////////////////////////////////////////////
+  // ///////////////// BAR CHART
+
   // Creating simple bar chart - Vertical
   const svgWidth = 1200,
     svgHeight = 1000,
@@ -383,6 +386,8 @@ const population = {
   population_age_80_and_older: 421794,
 };
 
+// /////////////////////////////////////////////////////////////////////////////
+// ///////////////// SCATTER PLOT
 function renderScatterPlot() {
   const svg = d3.select(".scatter-plot");
 
@@ -517,6 +522,8 @@ function renderScatterPlot() {
 }
 renderScatterPlot();
 
+// /////////////////////////////////////////////////////////////////////////////
+// ///////////////// LINE AND BOX CHART
 function renderLineChart() {
   const svg = d3.select(".line-chart");
 
@@ -685,8 +692,8 @@ function renderLineChart() {
 }
 renderLineChart();
 
-// ////////////////////
-// AREA CHART
+// /////////////////////////////////////////////////////////////////////////////
+// ///////////////// AREA CHART
 
 import { worldPopArr } from "./data/worldPop.js";
 
@@ -790,8 +797,8 @@ function renderAreaChart() {
 }
 renderAreaChart();
 
-// /////////////
-// TREEMAP
+// /////////////////////////////////////////////////////////////////////////////
+// ///////////////// TREEMAP
 
 import { state, formattedArr, byCoin, platforms } from "./data/cryptoData.js";
 
@@ -800,7 +807,7 @@ import { state, formattedArr, byCoin, platforms } from "./data/cryptoData.js";
 
 function renderTreemap() {
   const data = formattedArr;
-  console.log(formattedArr);
+  // console.log(formattedArr);
 
   const property = (d) => d.percentChange;
 
@@ -820,7 +827,7 @@ function renderTreemap() {
     root
   );
 
-  console.log(`root`, root);
+  // console.log(`root`, root);
 
   // Create groups for tree leaves - contains everything that goes inside each leaf
   const leaf = svg
@@ -978,3 +985,182 @@ function renderTreemap() {
     */
 }
 renderTreemap();
+
+// /////////////////////////////////////////////////////////////////////////////
+// ///////////////// PIE CHART
+function renderPieChart() {
+  const data = [
+    { number: 10, name: "Locke" },
+    { number: 2, name: "Reyes" },
+    { number: 6, name: "Ford" },
+    { number: 16, name: "Jarrah" },
+    { number: 23, name: "Shephard" },
+    { number: 20, name: "Max" },
+    { number: 19, name: "Esteban" },
+    { number: 12, name: "Mark" },
+    { number: 33, name: "Seb" },
+    { number: 45, name: "Kwon" },
+  ];
+
+  const svg = d3.select("#pie-chart");
+
+  const height = +svg.attr("height");
+  const width = +svg.attr("width");
+
+  const margin = {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  };
+
+  const color = d3
+    .scaleOrdinal()
+    .domain(data.map((d) => d.name))
+    .range(
+      d3
+        .quantize((t) => d3.interpolateSpectral(t * 0.8 + 0.1), data.length)
+        .reverse()
+    );
+
+  const radius = Math.min(height, width) / 2;
+
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const g = svg
+    .append("g")
+    .attr("transform", `translate(${radius}, ${radius})`);
+
+  //
+  // const data = [5,2,3,16,46,20,13,10,2,9,14]
+  // const arcs = d3.pie()(data); // Returned array in same order as input array even though pie chart sorted in descending order. Used for simple array of data
+  // console.log(`pie`, arcs);
+
+  // PIE GENERATOR - Pie Chart is made up of several segmants that each have a start and an end angle as well as a pad angle (pad angle = angular separation between each adjacent arc). data passed into d3.pie() generator which returns and object for each data point with that info calculated.
+  const arcs = d3
+    .pie()
+    .sort(null) // Has to be specified cz .pie() automatically sorts from big to small
+    // .padAngle(0.05) //-> disprortionally effects smaller sections if set as single value. Recommended: min inner radius when using padding is outerRadius * padAngle / sinθ where θ is angular span of smallest arc before padding
+    .value((d) => d.number)(data); // Same as mapping over your data -> d3.pie()(data.map(d=> d.number)). pie doesnt produce shape but produces angles that are needed to be passed into an arc generator
+  // can also chain .sort() & .padAngle() which is the angular separation btw each adjacent arc -> specified in radians if used with arc generator
+  console.log(arcs);
+
+  // ARC GENERATOR - produces circular sector in a pie/donut chart. Arcs centered @ 0,0 and use transform to move arc to diff position. requires 4 args/chained methods: innerRadius, outerRadius, startAngle, endAngle (default values are 0 for each)
+  const arc = d3.arc().outerRadius(radius).innerRadius(0); // innerRadius is radius of inner circle if you want a donut chart
+  // .cornerRadius(radius * 0.05);
+  // .padAngle(0.01);
+
+  const arcLabel = d3
+    .arc()
+    .innerRadius(radius * 0.8)
+    .outerRadius(radius * 0.8);
+
+  g.selectAll("path")
+    .data(arcs)
+    .join("path")
+    .attr("stroke", "white")
+    .attr("fill", color)
+    .attr("d", arc);
+
+  g.append("g")
+    .attr("font-family", "sans-serif")
+    .attr("font-size", 12)
+    .attr("text-anchor", "middle")
+    .selectAll("text")
+    .data(arcs)
+    .join("text")
+    .attr("transform", (d) => `translate(${arcLabel.centroid(d)})`) // .centroid finds the mid point [x,y] of the center line of the arc generated
+    .call((text) => text.append("tspan"))
+    .attr("y", "-0.4em")
+    .attr("font-weight", "bold")
+    .text((d) => d.data.name)
+    .call((text) =>
+      text.filter((d) => d.endAngle - d.startAngle > 0.25).append("tspan")
+    )
+    .attr("x", 0)
+    .attr("y", "0.7em")
+    .attr("fill-opacity", 0.7)
+    .attr("font-family", "sans-serif")
+    .attr("font-size", 12)
+    .attr("text-anchor", "middle");
+}
+
+renderPieChart();
+
+// /////////////////////////////////////////////////////////////////////////////
+// ///////////////// SUN BURST CHART
+
+function renderSunBurst() {
+  const data = formattedArr;
+  console.log(formattedArr);
+
+  const svg = d3.select("#sun-burst");
+
+  const height = +svg.attr("height");
+  const width = +svg.attr("width");
+
+  const radius = Math.min(width, height) / 2;
+  console.log(radius);
+
+  const hirarchy = d3
+    .hierarchy(data)
+    .sum((d) => Math.abs(d.value))
+    .sort((a, b) => b.value - a.value);
+  console.log(`hhhh`, hirarchy);
+
+  const root = d3.partition().size([2 * Math.PI, radius])(hirarchy);
+
+  const arc = d3
+    .arc()
+    .startAngle((d) => d.x0)
+    .endAngle((d) => d.x1)
+    .padAngle((d) => Math.min((d.x1 - d.x0) / 2, 0.005))
+    .padRadius(radius / 2)
+    .innerRadius((d) => d.y0)
+    .outerRadius((d) => d.y1 - 1);
+
+  const color = d3.scaleOrdinal(
+    d3.quantize(d3.interpolateRainbow, data.children.length + 1)
+  );
+
+  // const root = partition(data);
+
+  console.log(root);
+
+  const g = svg.append("g").attr("transform", `translate(${radius},${radius})`);
+
+  g.append("g")
+    // .attr("fill-opacity", 0.6)
+    .selectAll("path")
+    .data(root.descendants().filter((d) => d.depth))
+    .join("path")
+    .attr("fill", (d) => {
+      while (d.depth > 1) d = d.parent;
+      return color(d.data.name);
+    })
+    .attr("d", arc);
+
+  g.append("g")
+    .attr("pointer-events", "none")
+    .attr("text-anchor", "middle")
+    .attr("fill", "white")
+    .attr("font-size", 15)
+    .attr("font-family", "sans-serif")
+    .selectAll("text")
+    .data(
+      root
+        .descendants()
+        .filter((d) => d.depth && ((d.y0 + d.y1) / 2) * (d.x1 - d.x0) > 10)
+    )
+    .join("text")
+    .attr("transform", function (d) {
+      const x = (((d.x0 + d.x1) / 2) * 180) / Math.PI;
+      const y = (d.y0 + d.y1) / 2;
+      return `rotate(${x - 90}) translate(${y},0) rotate(${x < 180 ? 0 : 180})`;
+    })
+    .attr("dy", "0.35em")
+    .text((d) => d.data.name);
+}
+
+renderSunBurst();
